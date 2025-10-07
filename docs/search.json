@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "better_programming.html",
+    "href": "better_programming.html",
+    "title": "Better Programming",
+    "section": "",
+    "text": "What is the purpose of the lapply() function? What is the equivalent purrr function?\nSuppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = “kendall”) on each element of the list. Write code to do this below!\nWhat are two advantages of using purrr functions instead of the BaseR apply family?\nWhat is a side-effect function?\nWhy can you name a variable ‘sd’ in a function and not cause any issues with the ‘sd’ function?"
+  },
+  {
+    "objectID": "better_programming.html#task-1-conceptual-questions",
+    "href": "better_programming.html#task-1-conceptual-questions",
+    "title": "Better Programming",
+    "section": "",
+    "text": "What is the purpose of the lapply() function? What is the equivalent purrr function?\nSuppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = “kendall”) on each element of the list. Write code to do this below!\nWhat are two advantages of using purrr functions instead of the BaseR apply family?\nWhat is a side-effect function?\nWhy can you name a variable ‘sd’ in a function and not cause any issues with the ‘sd’ function?"
+  },
+  {
+    "objectID": "better_programming.html#task-2-writing-r-functions",
+    "href": "better_programming.html#task-2-writing-r-functions",
+    "title": "Better Programming",
+    "section": "Task 2: Writing R Functions",
+    "text": "Task 2: Writing R Functions"
+  },
+  {
+    "objectID": "better_programming.html#task-3-practice-with-purrr",
+    "href": "better_programming.html#task-3-practice-with-purrr",
+    "title": "Better Programming",
+    "section": "Task 3: Practice with Purrr",
+    "text": "Task 3: Practice with Purrr"
+  }
+]
