@@ -7,11 +7,167 @@ format: html
 ## Task 1: Conceptual Questions
 
 1.  What is the purpose of the lapply() function? What is the equivalent purrr function?
+
+    lapply() applies functions, like mean(), to lists. The equivalent purrr function is map().
+
 2.  Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below!
+
+    ``` r
+    lapply(X = numeric_matrix, FUN = cor, method = "kendall")
+    ```
+
 3.  What are two advantages of using purrr functions instead of the BaseR apply family?
+
+    -   It gives use a cleaner/more consistent way to apply functions to objects
+
+    -   Purrr has lots of helper functions to help you write compact code
+
 4.  What is a side-effect function?
+
+    A side effect function modifies some state. An example is write_csv() which creates a new csv file, or setwd(), which sets the working directory, modifying the R session.
+
 5.  Why can you name a variable 'sd' in a function and not cause any issues with the 'sd' function?
 
+    Calling a function creates a temporary function environment, allowing variables in a function to have the same name as global variables.
+
 ## Task 2: Writing R Functions
+
+1.  Write a basic function that takes in a vector of responses and a vector of predictions and outputs the RMSE. If a value is missing for the vector of responses (i.e. an NA is present), allow for additional arguments to the mean() function (elipses) that removes the NA values in the computation.
+
+```{r}
+getRMSE <- function(response, predictions, ...) {
+  # find the squared errors
+  sq_errors <- (response - predictions)^2
+
+  # calculate RMSE
+  RMSE <- sqrt(mean(sq_errors, ...))
+  
+  return(RMSE)
+}
+```
+
+2.  Test getRMSE() with and without NA values
+
+Generate sample data
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+
+getRMSE() function without missing values
+
+```{r}
+getRMSE(resp, pred)
+```
+
+getRMSE() with missing values
+
+```{r}
+# change two values from resp to NA
+resp[1:2] <- NA_real_
+
+# call getRMSE with na.rm set to true
+getRMSE(resp, pred, na.rm = TRUE)
+```
+
+3.  Write a function called getMAE() that follows the specifications of the getRMSE() function.
+
+```{r}
+getMAE <- function(response, predictions, ...) {
+  # calculate absolute value of errors
+  errors <- abs(response - predictions)
+  
+  # calculate MAE
+  MAE <- mean(errors, ...)
+  
+  return(MAE)
+}
+```
+
+4.  Test getMAE() with and without missing values
+
+Generate sample data
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+
+Test getMAE() without missing values
+
+```{r}
+getMAE(resp, pred)
+```
+
+Test getMAE() with missing values
+
+```{r}
+resp[1:2] <- NA_real_
+
+getMAE(resp, pred, na.rm = TRUE)
+```
+
+5.  Create a wrapper function that can be used to get either or both metrics returned with a single function call. When returning your values, give them appropriate names. Function should:
+
+-   check that two numeric (atomic) vectors have been passed (consider is.vector(), is.atomic(), and is.numeric()). If not, the function should stop and print an informative message.
+-   return both metrics by default and include names. The behavior should be able to be changed using a character string of metrics to find.
+
+```{r}
+get_MAE_RMSE <- function(response, predictions, metric = c('MAE', 'RMSE'), ...) {
+  # check data types for response and predictions vectors
+  if (!is.numeric(response) || !is.atomic(response))
+    stop('Response is not a numeric vector')
+  
+  if (!is.numeric(predictions) || !is.atomic(predictions))
+    stop('Response is not a numeric vector')
+  
+  # create empty list to store calculated metrics
+  result <- c()
+  # check for each metric in the metric argument
+  if ('MAE' %in% metric) {
+    result['MAE'] <- getMAE(response, predictions, ...)
+  }
+  
+  if ('RMSE' %in% metric) {
+    result['RMSE'] <- getRMSE(response, predictions, ...)
+  }
+  return(result)
+}
+```
+
+6.  Test get_MAE_RMSE() with and without missing values
+
+Generate sample data
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+
+Test function without missing values
+
+```{r}
+get_MAE_RMSE(resp, pred)
+```
+
+Test function with missing values
+
+```{r}
+# add missing values to resp
+resp[1:2] <- NA_real_
+
+# test function
+get_MAE_RMSE(resp, pred, na.rm = TRUE)
+```
 
 ## Task 3: Practice with Purrr
