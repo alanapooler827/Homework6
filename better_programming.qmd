@@ -8,7 +8,9 @@ format: html
 
 1.  What is the purpose of the lapply() function? What is the equivalent purrr function?
 
-    lapply() applies functions, like mean(), to lists. The equivalent purrr function is map().
+    lapply() applies functions, like mean(), to all of the elements in a list.
+
+    The equivalent purrr function is map().
 
 2.  Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below!
 
@@ -58,13 +60,13 @@ resp <- 3 + 10 * x + rnorm(n)
 pred <- predict(lm(resp ~ x), data.frame(x))
 ```
 
-getRMSE() function without missing values
+Test getRMSE() function without missing values
 
 ```{r}
 getRMSE(resp, pred)
 ```
 
-getRMSE() with missing values
+Test getRMSE() with missing values
 
 ```{r}
 # change two values from resp to NA
@@ -171,3 +173,68 @@ get_MAE_RMSE(resp, pred, na.rm = TRUE)
 ```
 
 ## Task 3: Practice with Purrr
+
+Import purrr
+
+```{r}
+library(purrr)
+```
+
+Create list object
+
+```{r}
+lm_fit1 <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+```
+
+1.  Pull out the coefficients list element using \$, coef(), and the pluck() function from purrr.
+
+```{r}
+# using $
+lm_fit1$coefficients
+
+# using coef()
+coef(lm_fit1)
+
+# using pluck()
+lm_fit1 |> 
+  pluck(coefficients)
+```
+
+2.  Fit a number of different models with the code below!
+
+```{r}
+lm_fit2 <- lm(Sepal.Length ~ Sepal.Width, data = iris)
+lm_fit3 <- lm(Sepal.Length ~ Petal.Width + Sepal.Width + Species, data = iris)
+lm_fit4 <- lm(Sepal.Length ~ Petal.Width + Petal.Length + Sepal.Width + Species,
+data = iris)
+fits <- list(lm_fit1, lm_fit2, lm_fit3, lm_fit4)
+```
+
+3.  Use map() to apply the confint() function to each model fit in the fits object.
+
+```{r}
+map(fits, confint)
+```
+
+4.  Create histograms of the residuals in each model fit
+
+```{r}
+# set up 2x2 plotting window
+par(mfrow = c(2, 2))
+
+# pull out residuals using map() and create histograms
+residuals <- map(fits, resid) |>
+  walk(hist)
+```
+
+5.  Update histograms to have appropriate names
+
+```{r}
+# set up 2x2 plotting window
+par(mfrow = c(2, 2))
+
+# Assign names to elements of residuals list and create histograms
+residuals |> 
+  set_names(c('fit1', 'fit2', 'fit3', 'fit4')) |>
+  iwalk(\(x, names) hist(x, main = paste('Residuals for', names)))
+```
